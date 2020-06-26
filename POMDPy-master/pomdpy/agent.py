@@ -23,7 +23,10 @@ class Agent:
         :param solver:
         :return:
         """
-        self.logger = logging.getLogger('POMDPy.Solver')
+        if model.solver == 'POMCP':
+            self.logger = logging.getLogger('POMCP.Solver')
+        elif model.solver == 'ME-POMCP':
+            self.logger = logging.getLogger('ME-POMCP.Solver')
         self.model = model
         self.results = Results()
         self.experiment_results = Results()
@@ -138,13 +141,13 @@ class Agent:
             # Reset the epoch stats
             self.results = Results()
 
-            if self.model.solver == 'POMCP':
+            if self.model.solver == 'POMCP' or self.model.solver == 'ME-POMCP':
                 eps = self.run_pomcp(i + 1, eps)
                 self.model.reset_for_epoch()
 
             if self.experiment_results.time.running_total > self.model.timeout:
                 console(2, module, 'Timed out after ' + str(i) + ' epochs in ' +
-                        self.experiment_results.time.running_total + ' seconds')
+                        str(self.experiment_results.time.running_total) + ' seconds')
                 break
 
     def run_pomcp(self, epoch, eps):
@@ -154,7 +157,7 @@ class Agent:
         solver = self.solver_factory(self)
 
         # Monte-Carlo start state
-        state = solver.belief_tree_index.sample_particle()
+        state = self.model.get_state_with_actual_rock_states(self.model.start_position)
 
         reward = 0
         discounted_reward = 0

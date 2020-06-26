@@ -94,7 +94,7 @@ class PositionAndRockData(HistoricalData):
         return any_good_rocks
 
     def create_child(self, rock_action, rock_observation):
-        next_data = self.deep_copy()
+        next_data = self.shallow_copy()
         next_position, is_legal = self.model.make_next_position(self.grid_position.copy(), rock_action.bin_number)
         next_data.grid_position = next_position
 

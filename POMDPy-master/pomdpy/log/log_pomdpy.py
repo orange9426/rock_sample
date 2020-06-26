@@ -3,8 +3,8 @@ import logging.handlers
 from pomdpy.util import config_parser
 
 
-def init_logger():
-    my_logger = logging.getLogger('POMDPy')
+def init_logger(logger_name):
+    my_logger = logging.getLogger(logger_name)
 
     # default log format has time, module name, and message
     my_format = "%(asctime)s - %(name)s - %(message)s"

@@ -50,7 +50,7 @@ class RockAction(DiscreteAction):
 
     def to_string(self):
         if self.bin_number >= ActionType.CHECK:
-            action = "CHECK"
+            action = "CHECK " + str(self.rock_no)
         elif self.bin_number is ActionType.NORTH:
             action = "NORTH"
         elif self.bin_number is ActionType.EAST:

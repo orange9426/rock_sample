@@ -12,8 +12,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Set the run parameters.')
     parser.add_argument('--env', default='RockSample', type=str, help='Specify the env to solve {RockSample}')
-    parser.add_argument('--solver', default='POMCP', type=str,
-                        help='Specify the solver to use {POMCP}')
+    parser.add_argument('--solver', default='ME-POMCP', type=str,
+                        help='Specify the solver to use {MEPOMCP}')
     parser.add_argument('--seed', default=int(time.time()), type=int, help='Specify the random seed for numpy.random')
     parser.add_argument('--use_tf', dest='use_tf', action='store_true', help='Set if using TensorFlow')
     parser.add_argument('--discount', default=0.95, type=float, help='Specify the discount factor (default=0.95)')
@@ -32,7 +32,8 @@ if __name__ == '__main__':
                                                                   'timeout')
     parser.add_argument('--preferred_actions', dest='preferred_actions', action='store_true', help='For RockSample, '
                                                     'specify whether smart actions should be used')
-    parser.add_argument('--ucb_coefficient', default=2.0, type=float, help='Coefficient for UCB algorithm used by MCTS')
+    parser.add_argument('--me_tau', default=2, type=float, help='Tau for Maximum Entropy algorithm used by MCTS')
+    parser.add_argument('--me_epsilon', default=0.05, type=float, help='Epsilon for Maximum Entropy algorithm used by MCTS')
     parser.add_argument('--n_start_states', default=2000, type=int, help='Num of state particles to generate for root '
                         'belief node in MCTS')
     parser.add_argument('--min_particle_count', default=1000, type=int, help='Lower bound on num of particles a belief '
@@ -49,11 +50,11 @@ if __name__ == '__main__':
 
     args = vars(parser.parse_args())
 
-    init_logger('POMCP')
+    init_logger('ME-POMCP')
 
     np.random.seed(args['seed'])
 
-    if not args['solver'] == 'POMCP':
+    if not args['solver'] == 'POMCP' and not args['solver'] == 'ME-POMCP':
         raise ValueError('solver not supported')
     else:
         solver = POMCP

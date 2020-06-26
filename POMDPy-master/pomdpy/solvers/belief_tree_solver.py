@@ -120,18 +120,17 @@ class BeliefTreeSolver(Solver):
             action_mapping_entry.update_visit_count(1)
             action_mapping_entry.update_q_value(q_value)
 
-    def rollout(self, belief_node):
+    def rollout(self, state, belief_node):
         """
         Iterative random rollout search to finish expanding the episode starting at belief_node
         :param belief_node:
         :return:
         """
-        legal_actions = belief_node.data.generate_legal_actions()
+        legal_actions = self.model.get_rollout_actions(state, belief_node, None)
 
         if not isinstance(legal_actions, list):
             legal_actions = list(legal_actions)
 
-        state = belief_node.sample_particle()
         is_terminal = False
         discounted_reward_sum = 0.0
         discount = 1.0
@@ -146,7 +145,7 @@ class BeliefTreeSolver(Solver):
             # advance to next state
             state = step_result.next_state
             # generate new set of legal actions from the new state
-            legal_actions = self.model.get_legal_actions(state)
+            legal_actions = self.model.get_rollout_actions(state, belief_node, legal_action)
             num_steps += 1
 
         return discounted_reward_sum

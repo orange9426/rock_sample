@@ -37,6 +37,35 @@ def ucb_action(mcts, current_node, greedy):
     return random.choice(best_actions)
 
 
+def softmax_action(mcts, current_node, greedy):
+    mapping = current_node.action_map
+
+    N = mapping.total_visit_count
+    log_n = np.log(N + 1)
+    me_tau = mcts.model.me_tau
+    me_epsilon = mcts.model.me_epsilon
+
+    actions = list(mapping.entries.values())
+    random.shuffle(actions)
+    prob_list = [0] * len(actions)
+    if log_n == 0:
+        prob_list = [1 / len(actions)] * len(actions)
+    else:
+        lambda_h = me_epsilon * len(actions) / log_n
+        if lambda_h >= 1:
+            prob_list = [1 / len(actions)] * len(actions)
+        
+        else:
+            softmax = me_tau * np.log(sum([np.exp(action_entry.mean_q_value / me_tau)
+                                      for action_entry in actions]))
+    
+            for i, action_entry in enumerate(actions):
+                prob_list[i] = (1 - lambda_h) * np.exp((action_entry.mean_q_value - softmax) / me_tau) + lambda_h / len(actions)
+
+    prob_list = [p / sum(prob_list) for p in prob_list]
+    return np.random.choice(actions, p=prob_list).get_action()
+
+
 def e_greedy(current_node, epsilon):
     best_actions = []
     best_q_value = -np.inf
