@@ -60,13 +60,27 @@ class Agent:
                 ' +- ' + str(self.experiment_results.discounted_return.std_err()))
         console(2, module, 'ave time/epoch: ' + str(self.experiment_results.time.mean))
 
-        self.logger.info('env: ' + self.model.env + '\t' +
-                         'epochs: ' + str(self.model.n_epochs) + '\t' +
-                         'ave undiscounted return: ' + str(self.experiment_results.undiscounted_return.mean) + ' +- ' +
-                         str(self.experiment_results.undiscounted_return.std_err()) + '\t' +
-                         'ave discounted return: ' + str(self.experiment_results.discounted_return.mean) +
-                         ' +- ' + str(self.experiment_results.discounted_return.std_err()) +
-                         '\t' + 'ave time/epoch: ' + str(self.experiment_results.time.mean))
+        if self.model.solver == 'POMCP':
+            self.logger.info('env: ' + self.model.env + '\t' +
+                            'epochs: ' + str(self.model.n_epochs) + '\t' +
+                            'simulations: ' + str(self.model.n_sims) + '\t' +
+                            'ucb_c: ' + str(self.model.ucb_coefficient) + '\t' +
+                            'ave undiscounted return: ' + str(self.experiment_results.undiscounted_return.mean) + ' +- ' +
+                            str(self.experiment_results.undiscounted_return.std_err()) + '\t' +
+                            'ave discounted return: ' + str(self.experiment_results.discounted_return.mean) +
+                            ' +- ' + str(self.experiment_results.discounted_return.std_err()) +
+                            '\t' + 'ave time/epoch: ' + str(self.experiment_results.time.mean))
+        elif self.model.solver == 'ME-POMCP':
+            self.logger.info('env: ' + self.model.env + '\t' +
+                            'epochs: ' + str(self.model.n_epochs) + '\t' +
+                            'simulations: ' + str(self.model.n_sims) + '\t' +
+                            'me_tau: ' + str(self.model.me_tau) + '\t' +
+                            'me_eps: ' + str(self.model.me_epsilon) + '\t' +
+                            'ave undiscounted return: ' + str(self.experiment_results.undiscounted_return.mean) + ' +- ' +
+                            str(self.experiment_results.undiscounted_return.std_err()) + '\t' +
+                            'ave discounted return: ' + str(self.experiment_results.discounted_return.mean) +
+                            ' +- ' + str(self.experiment_results.discounted_return.std_err()) +
+                            '\t' + 'ave time/epoch: ' + str(self.experiment_results.time.mean))
 
     def multi_epoch_tf(self):
         import tensorflow as tf
